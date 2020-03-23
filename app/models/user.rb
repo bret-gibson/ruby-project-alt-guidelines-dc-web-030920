@@ -3,6 +3,38 @@ class User < ActiveRecord::Base
     has_many :songs, through: :libraries
 
    def display_songs
-    puts self.songs.map {|x| "#{x.title} - #{x.artist}"}.join("\n")
+    puts "--------------------------"
+    puts "Song Title --- Artist Name"
+    puts "--------------------------"
+    i = 1
+    songs.each do |x| 
+        puts "#{i}. #{x.title} - #{x.artist}" 
+        i+=1
+    end
+    puts "--------------------------"
+   end
+
+   def search_title
+    result = nil
+    while !result
+        puts "-------------------"
+        puts "Enter Title to Search"
+        puts "-------------------"
+        search = gets.chomp
+        result = songs.find {|y| y.title == search}
+        puts "Results"
+        puts "-------------------"
+        puts "#{result.title} - #{result.artist}" if result
+        puts "Sorry no Song Found" if !result
+        puts "-------------------"
+    end
+   end
+
+   def search_artist
+    puts "Enter Artist to Search"
+    search = gets.chomp
+    result = songs.select {|y| y.artist == search}
+    # binding.pry
+    result.each {|x| puts "#{x.title} - #{x.artist}"}
    end
 end
