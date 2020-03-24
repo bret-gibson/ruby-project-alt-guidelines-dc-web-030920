@@ -60,9 +60,11 @@ def add_song_from_search
         puts "ok fine"
     end
 
+    puts "You have selected:"
     puts song_result
     puts artist_result
     puts album_result
+    puts "------------------"
     # song_result = result["title"]
     
     # artist_result = result["artist"]["name"]    
@@ -71,10 +73,7 @@ def add_song_from_search
 
     # album_result = result["album"]["title"]
     Album.create(name: album_result, artist_id: art_id.id)
-    alb_id = Album.all.find do |album|
-        # binding.pry
-        album.name.downcase == album_result.downcase
-    end
+    alb_id = Album.all.find {|album| album.name.downcase == album_result.downcase}
 
     Song.create(title: song_result, artist_id: art_id.id, album_id: alb_id.id)
 end
