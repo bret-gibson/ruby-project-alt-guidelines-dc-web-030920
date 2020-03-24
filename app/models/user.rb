@@ -7,8 +7,8 @@ class User < ActiveRecord::Base
     puts "Song Title --- Artist Name"
     puts "--------------------------"
     i = 1
-    songs.each do |x| 
-        puts "#{i}. #{x.title} - #{x.artist}" 
+    songs.each do |song| 
+        puts "#{i}. #{song.title} - #{song.artist}" 
         i+=1
     end
     puts "--------------------------"

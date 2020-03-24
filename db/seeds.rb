@@ -3,7 +3,7 @@ Song.destroy_all
 Library.destroy_all
 
 user1 = User.create(name: "Alex")
-user2 = User.create(name: "Brett")
+user2 = User.create(name: "Bret")
 
 song1 = Song.create(title: "The Box", artist: "Roddy Ricch")
 song2 = Song.create(title: "Don't Start Now", artist: "Dua Lipa")
