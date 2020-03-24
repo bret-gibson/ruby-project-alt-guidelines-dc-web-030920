@@ -32,27 +32,21 @@ def menu(user)
         choice = gets.chomp
         case choice.to_i
             when 1
-            puts "selected 1"
+                user.add_song
             when 2
-                system "clear"
                 logo
-                2.times {puts ""}
                 puts user.display_songs
                 2.times {puts ""}
             when 3
-                system "clear"
                 logo
-                2.times {puts ""}
                 user.search_artist
                 2.times {puts ""}
             when 4
-                system "clear"
                 logo
-                2.times {puts ""}
                 user.search_title
                 2.times {puts ""}
             when 5
-                system "clear"
+                logo
                 Library.most_added
             when 6
             exit
@@ -63,6 +57,7 @@ def menu(user)
    end
 end
 def logo
+    system "clear"
     puts'        888b    888        888       .d8888b.                 888   d8b .d888         
         8888b   888        888      d88P  Y88b                888   Y8Pd88P"          
         88888b  888        888      Y88b.                     888      888            
@@ -74,6 +69,7 @@ def logo
                                           888                                 888 
                                           888                            Y8b d88P 
                                           888                             "Y88P"' 
+    2.times {puts ""}
 end
 
 logo

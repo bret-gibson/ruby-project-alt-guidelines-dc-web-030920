@@ -37,4 +37,20 @@ class User < ActiveRecord::Base
     # binding.pry
     result.each {|x| puts "#{x.title} - #{x.artist}"}
    end
+
+   def add_song
+    logo
+    puts "-----------------------------------------"
+    puts "Enter a song Title to add to your library"
+    puts "-----------------------------------------"
+    puts ""
+    input = gets.chomp
+    add = Song.all.find {|song| song.title.downcase == input.downcase}
+    song = Library.create(song_id: add.id, user_id: self.id)
+    song.save
+    puts ""
+    # binding.pry
+    puts "#{add.title} by #{add.artist} has been added to your library"
+    2.times {puts ""}
+   end
 end
