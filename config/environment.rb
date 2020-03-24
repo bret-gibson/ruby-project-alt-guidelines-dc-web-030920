@@ -1,5 +1,8 @@
 require 'bundler'
 require 'pry'
+require 'json'
+require 'rest-client'
+require 'awesome_print'
 Bundler.require
 
 ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: 'db/development.db')

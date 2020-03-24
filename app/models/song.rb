@@ -24,7 +24,7 @@ class Song < ActiveRecord::Base
     end
 
     def self.play_song
-        pid = fork{exec 'afplay', '-v 0.5', "lib/11 - Everlong.mp3" }
+        pid = fork{exec 'afplay', "https://cdns-preview-8.dzcdn.net/stream/c-856ac82b7d537af081fc6c216e9b5f41-2.mp3" }
     end
 
     def self.stop_song
