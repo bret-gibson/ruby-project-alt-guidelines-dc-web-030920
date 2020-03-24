@@ -52,11 +52,13 @@ def menu(user)
                 user.search_title
                 2.times {puts ""}
             when 5
-            puts "selected 5"
+                system "clear"
+                Library.most_added
             when 6
             exit
             when 7
-            binding.pry
+                binding.pry
+            
         end
    end
 end

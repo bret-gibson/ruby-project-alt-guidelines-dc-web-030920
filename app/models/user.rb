@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
         puts "Enter Title to Search"
         puts "-------------------"
         search = gets.chomp
-        result = songs.find {|y| y.title == search}
+        result = songs.find {|y| y.title.downcase == search.downcase}
         puts "Results"
         puts "-------------------"
         puts "#{result.title} - #{result.artist}" if result
@@ -33,7 +33,7 @@ class User < ActiveRecord::Base
    def search_artist
     puts "Enter Artist to Search"
     search = gets.chomp
-    result = songs.select {|y| y.artist == search}
+    result = songs.select {|y| y.artist.downcase == search.downcase}
     # binding.pry
     result.each {|x| puts "#{x.title} - #{x.artist}"}
    end
