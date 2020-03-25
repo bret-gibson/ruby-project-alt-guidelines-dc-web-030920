@@ -13,11 +13,8 @@ def web_request
 end 
 
 #refactor to make smaller
-def add_song_from_search
+def add_song_from_search(user)
     result = web_request["data"][0..9]
-    # puts result["title"]
-    # puts result["artist"]["name"] 
-    # puts result["album"]["title"]
     system "clear"
     i = 1
     result[0..4].each do |song_data|
@@ -29,7 +26,6 @@ def add_song_from_search
             puts "--------------------------------------------"
         i+=1
     end
-
     puts "Select number for song or hit 6 for next 5 songs"
     answer = gets.chomp.to_i
     if answer <= 5
@@ -51,11 +47,13 @@ def add_song_from_search
             puts "--------------------------------------------"
             i+=1
         end
-        puts "Select a number for song"
-        answer = gets.chomp.to_i
-        song_result = result[answer -1]["title"]
-        artist_result = result[answer -1]["artist"]["name"] 
-        album_result = result[answer -1]["album"]["title"]
+        puts "Select a number for song or EXIT to exit"
+        
+        answer = gets.chomp
+        exit if answer.downcase == "exit"
+        song_result = result[answer.to_i -1]["title"]
+        artist_result = result[answer.to_i -1]["artist"]["name"] 
+        album_result = result[answer.to_i -1]["album"]["title"]
     else
         puts "ok fine"
     end
@@ -75,5 +73,14 @@ def add_song_from_search
     Album.create(name: album_result, artist_id: art_id.id)
     alb_id = Album.all.find {|album| album.name.downcase == album_result.downcase}
 
-    Song.create(title: song_result, artist_id: art_id.id, album_id: alb_id.id)
+    son_id = Song.create(title: song_result, artist_id: art_id.id, album_id: alb_id.id)
+
+    binding.pry
+    puts "Add song to library? Y/N"
+    reply = gets.chomp
+    if reply.downcase == "y"
+        Library.create(user_id: user.id, song_id: son_id.id)
+    else
+        Menu.main_menu(user)
+    end
 end

@@ -16,7 +16,11 @@ class User < ActiveRecord::Base
     puts "--------------------------"
     puts "---- SELECT A SONG -------"
     n = gets.chomp.to_i
-    Menu.main_menu(self) if n == i
+    if n == i
+        system "clear"
+        logo
+        Menu.main_menu(self)
+    end
     #add a validaiton check later
     pick = songs[n-1]
     puts "#{songs[n-1].title} - #{songs[n-1].artist.name}"
