@@ -88,16 +88,12 @@ class Menu
                     logo
                     Album.show_album_info(pick)
                 when 3
+                    logo
                     pick.songs_by_artist
                     2.times {puts ""}
                 when 4
-                    # if @@user.songs.all.find {|song| song.title == pick.song.title}
-                    #     puts "remove song from library"
-                        pick.remove_song
-                        main_menu(@@user)
-                    # else
-                    #     pick.song.add_song(@@user)
-                    # end
+                    pick.remove_song
+                    main_menu(@@user)
                     2.times {puts ""}
                 when 5
                     main_menu(@@user)
@@ -106,8 +102,6 @@ class Menu
             end
        end
      end
-
- 
 end
 
 def logo
