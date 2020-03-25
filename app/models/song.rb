@@ -24,8 +24,11 @@ class Song < ActiveRecord::Base
     end
 
     def play_song
-        # binding.pry
         Launchy.open(self.preview_url)
+        puts "Now playing preview of #{self.title} by #{self.artist.name}"
+        puts "Press any key to go back to the song menu"
+        gets.chomp
+        logo
     end
 
     def self.stop_song

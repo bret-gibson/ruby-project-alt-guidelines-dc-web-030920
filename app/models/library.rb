@@ -13,7 +13,7 @@ class Library < ActiveRecord::Base
         puts ""
         puts "#{most.title} - #{most.artist.name}"
         puts "It was added by #{id[1].count} users."
-        puts "--------------------------------"
+        puts "\n--------------------------------"
         2.times {puts ""}
         
     end

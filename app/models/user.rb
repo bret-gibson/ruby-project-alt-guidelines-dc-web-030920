@@ -37,17 +37,27 @@ class User < ActiveRecord::Base
 
    def search_title
     result = nil
+    logo
+    puts "---------------------"
+    puts "Enter Title to Search"
+    puts "---------------------"
+    search = gets.chomp
     while !result
-        puts "-------------------"
-        puts "Enter Title to Search"
-        puts "-------------------"
-        search = gets.chomp
+        
         result = songs.find {|y| y.title.downcase == search.downcase}
-        puts "Results"
-        puts "-------------------"
+        puts "\nResults:"
         puts "#{result.title} - #{result.artist.name}" if result
-        puts "Sorry no Song Found" if !result
-        puts "-------------------"
+        puts "-------------------------"
+        if !result
+            logo
+            puts "------------------------------------------------------"
+            puts "Sorry no Song Found" if !result
+            puts "Enter a new song or type 'exit' to return to main menu"
+            puts "------------------------------------------------------"
+            search = gets.chomp
+            return result = search if search.downcase == "exit"
+            logo
+        end
     end
    end
 
@@ -55,25 +65,6 @@ class User < ActiveRecord::Base
     puts "Enter Artist to Search"
     search = gets.chomp
     result = songs.select {|y| y.artist.name.downcase == search.downcase}
-    # binding.pry
     result.each {|x| puts "#{x.title} - #{x.artist.name}"}
    end
-
-   def add_song
-    #give warning if user has already added song
-    logo
-    puts "-----------------------------------------"
-    puts "Enter a song Title to add to your library"
-    puts "-----------------------------------------"
-    puts ""
-    input = gets.chomp
-    add = Song.all.find {|song| song.title.downcase == input.downcase}
-    song = Library.create(song_id: add.id, user_id: self.id)
-    #add validation check
-    puts ""
-    puts "#{add.title} by #{add.artist.name} has been added to your library"
-    2.times {puts ""}
-    reload
-   end
-
 end

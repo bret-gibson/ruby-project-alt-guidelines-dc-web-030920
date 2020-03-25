@@ -15,12 +15,11 @@ def album_request(deezer_album_id)
     response_hash = JSON.parse(response_string)
 end 
 
-def get_single_song_data_from_search
+def get_single_song_data_from_search(user)
     song_data = {}
     first_ten_search_results = search_request["data"][0..9]
     system "clear"
-    full_song_hash = choose_search_result(first_ten_search_results)
-    binding.pry
+    full_song_hash = choose_search_result(first_ten_search_results, user)
 
     song_data[:song] =  full_song_hash["title"]
     song_data[:artist] = full_song_hash["artist"]["name"] 
@@ -42,7 +41,7 @@ end
 # FIX TO MAKE WORK WHEN THERE ARE LESS THAN FIVE RESULTS
 def add_song_from_search(user)
     logo
-    choice_data = get_single_song_data_from_search
+    choice_data = get_single_song_data_from_search(user)
     logo
     display_selection(choice_data)
     add_selection_to_library(choice_data, user)
@@ -86,7 +85,7 @@ def add_selection_to_library(data, user)
     end
 end
 
-def choose_search_result(result)
+def choose_search_result(result, user)
     i = 1
     result[0..4].each do |song_data|
         puts "--------------------------------------------"
@@ -122,7 +121,7 @@ def choose_search_result(result)
         end
         puts "Select a number for song or EXIT to exit"
         answer = gets.chomp
-        exit if answer.downcase == "exit"
+        Menu.main_menu(user) if answer.downcase == "exit"
         answer = answer.to_i
         result[answer-1]
     end

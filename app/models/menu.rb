@@ -9,25 +9,35 @@ class Menu
     end
 
     def self.get_user
-        input = gets.chomp.upcase
-        get = User.all.find {|x| x.name.downcase == input.downcase}
-        2.times {puts ""}
-        puts "Welcome #{get.name}!"
-        2.times {puts ""}
-        get
+       valid = nil
+       while (!valid)
+            input = gets.chomp.upcase
+       
+            if User.all.find {|x| x.name.downcase == input.downcase} != nil
+                user = User.all.find {|x| x.name.downcase == input.downcase}
+                valid = true
+            else
+                puts "There is no user with this name. Please try again"
+                valid = nil
+            end
+        end
+        user
     end
 
     def self.main_menu(user)
         logo
         menu = true
         while (menu)
-            puts "Please select a menu item:"
+            puts  "MAIN MENU"
+            puts  "\n#{user.name}, please select a menu item:"
+            puts  "-----------------------------------------------"
             puts "1. Search for a song to add to my library"
             puts "2. See all songs in my library"
             puts "3. Search for song in my library by ARTIST"
             puts "4. Search for song in my library by SONG TITLE"
             puts "5. Give me the most popular song among all users"
-            puts "6. Exit"
+            puts "6. Logout"
+            puts "7. Exit program"
             choice = gets.chomp
             case choice.to_i
                 when 1
@@ -48,8 +58,10 @@ class Menu
                     logo
                     Library.most_added
                 when 6
-                exit
+                    Menu.logout
                 when 7
+                    exit
+                when 8
                     binding.pry
             end
        end
@@ -82,7 +94,6 @@ class Menu
             case choice.to_i
                 when 1
                     logo
-                    puts "Not Playing.... #{pick.title}"
                     pick.play_song
                 when 2
                     logo
@@ -102,6 +113,11 @@ class Menu
             end
        end
      end
+
+     def self.logout
+        @@user = nil
+        self.welcome
+     end
 end
 
 def logo
@@ -120,4 +136,4 @@ def logo
                                               888                             "Y88P"' 
     EOF
 2.times {puts ""}
-end  
+end
