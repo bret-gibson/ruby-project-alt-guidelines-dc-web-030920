@@ -71,4 +71,36 @@ class User < ActiveRecord::Base
     2.times {puts ""}
     reload
    end
+
+#    def add_song_from_api_search(artist_result, album_result, library_result)
+#     puts "Add song to library? Y/N"
+#     add_song_from_search(self)
+#     reply = gets.chomp
+#     if reply.downcase == "y"
+#         # artist_result = result["artist"]["name"]  
+
+#         #NEED TO CHECK IF ARTIST/SONG/ALBUM ALREADY EXIST BEFORE CREATING
+
+#         Artist.create(name: artist_result) if Artist.all.find {|artist| artist.name.downcase == artist_result.downcase} == nil
+#         art_id = Artist.all.find {|artist| artist.name.downcase == artist_result.downcase}
+
+#         # album_result = result["album"]["title"]
+#         Album.create(name: album_result, artist_id: art_id.id,deezer_id: deezer_album_id) if Album.all.find {|album| album.name.downcase == album_result.downcase} == nil
+#         alb_id = Album.all.find {|album| album.name.downcase == album_result.downcase}
+
+#         Song.create(title: song_result, artist_id: art_id.id, album_id: alb_id.id, preview_url: preview) if Song.all.find {|song| song.title.downcase == song_result.downcase} == nil
+#         son_id = Song.all.find{|song| song.title.downcase == song_result.downcase}
+
+#         # add song to database if N to library???
+#         if Library.all.find {|lib| lib.user_id == self.id && lib.song_id == son_id.id} == nil
+#             Library.create(user_id: self.id, song_id: son_id.id)
+#         else
+#             puts "\n!!!!!   Song already exists in library    !!!!\n\n"
+#         end
+#         # elsif reply.downcase == "n"
+#         #     web_request
+#     else
+#         Menu.main_menu(user)
+#     end
+#    end
 end

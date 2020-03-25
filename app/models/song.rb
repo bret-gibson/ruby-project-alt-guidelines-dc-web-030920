@@ -23,8 +23,9 @@ class Song < ActiveRecord::Base
         lib ||= Library.create(song_id: self.id, user_id: user.id)
     end
 
-    def self.play_song
-        pid = fork{exec 'afplay', "https://cdns-preview-8.dzcdn.net/stream/c-856ac82b7d537af081fc6c216e9b5f41-2.mp3" }
+    def play_song
+        # binding.pry
+        Launchy.open(self.preview_url)
     end
 
     def self.stop_song

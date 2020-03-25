@@ -4,8 +4,9 @@ Library.destroy_all
 Artist.destroy_all
 Album.destroy_all
 
-user1 = User.create(name: "Alex")
-user2 = User.create(name: "Bret")
+user1 = User.create(name: "Alex", age: 37)
+user2 = User.create(name: "Bret", age: 24)
+user3 = User.create(name: "Little Timmy", age:7)
 
 artist1 = Artist.create(name: "Roddy Ricch")
 artist2 = Artist.create(name: "Dua Lipa")

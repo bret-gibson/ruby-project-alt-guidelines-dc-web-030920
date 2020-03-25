@@ -60,7 +60,8 @@ class Menu
         while (menu)
             puts "--------------------------------------------"
             puts "----  YOU HAVE SELECTED: #{pick.title}  ---------"    
-            puts "----  SELECT AN ACTION FOR THIS SONG   -------" 
+            puts "----                                    ---------"    
+            puts "----  Select and action for this song   --------" 
             puts "--------------------------------------------"
             # pick = Library.all.find do 
             #     |x| 
@@ -80,10 +81,12 @@ class Menu
             choice = gets.chomp
             case choice.to_i
                 when 1
-                    puts "song is playing"
-                when 2
-                    Album.show_album_info(pick)
                     logo
+                    puts "Not Playing.... #{pick.title}"
+                    pick.play_song
+                when 2
+                    logo
+                    Album.show_album_info(pick)
                 when 3
                     pick.songs_by_artist
                     2.times {puts ""}
@@ -100,8 +103,6 @@ class Menu
                     main_menu(@@user)
                 when 6
                     binding.pry
-                when 7
-                    add_song_from_search
             end
        end
      end
