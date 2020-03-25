@@ -18,16 +18,11 @@ class Menu
     end
 
     def self.main_menu(user)
+        logo
         menu = true
         while (menu)
-    # I can add a song to my library
-    # I can see all the songs in my library
-    # I can search for songs in my library by artist
-    # I can search for songs in my library by title
-    # I can get the number of users who have added the song to their library (how popular the song is)
-    # I can find the most popular song
             puts "Please select a menu item:"
-            puts "1. Add song to library"
+            puts "1. Search for a song to add to my library"
             puts "2. See all songs in my library"
             puts "3. Search for song in my library by ARTIST"
             puts "4. Search for song in my library by SONG TITLE"
@@ -36,7 +31,7 @@ class Menu
             choice = gets.chomp
             case choice.to_i
                 when 1
-                    @@user.add_song
+                    add_song_from_search(@@user)
                 when 2
                     logo
                     song_sub_menu(@@user.display_songs)
@@ -56,8 +51,6 @@ class Menu
                 exit
                 when 7
                     binding.pry
-                when 8
-                    add_song_from_search(@@user)
             end
        end
     end
@@ -89,8 +82,8 @@ class Menu
                 when 1
                     puts "song is playing"
                 when 2
-                    puts "album information"
-                    2.times {puts ""}
+                    Album.show_album_info(pick)
+                    logo
                 when 3
                     pick.songs_by_artist
                     2.times {puts ""}

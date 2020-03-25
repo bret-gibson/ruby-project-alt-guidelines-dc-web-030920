@@ -14,16 +14,20 @@ class User < ActiveRecord::Base
     end
     puts "#{i}. Go back to main menu"
     puts "--------------------------"
-    puts "---- SELECT A SONG -------"
-    n = gets.chomp.to_i
-    if n == i
-        system "clear"
-        logo
-        Menu.main_menu(self)
+    valid = nil
+    while !valid
+        puts "---- SELECT A SONG -------"
+    
+        n = gets.chomp.to_i
+        valid = true if n <= i && n.class == Integer
     end
-    #add a validaiton check later
-    pick = songs[n-1]
-    puts "#{songs[n-1].title} - #{songs[n-1].artist.name}"
+        if n == i
+            logo
+            Menu.main_menu(self)
+        end
+        #add a validaiton check later
+        pick = songs[n-1]
+        puts "#{songs[n-1].title} - #{songs[n-1].artist.name}"
     pick
    end
 
@@ -63,7 +67,6 @@ class User < ActiveRecord::Base
     song = Library.create(song_id: add.id, user_id: self.id)
     #add validation check
     puts ""
-    # binding.pry
     puts "#{add.title} by #{add.artist.name} has been added to your library"
     2.times {puts ""}
     reload

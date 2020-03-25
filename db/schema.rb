@@ -15,6 +15,7 @@ ActiveRecord::Schema.define(version: 2020_03_24_193236) do
   create_table "albums", force: :cascade do |t|
     t.string "name"
     t.integer "artist_id"
+    t.integer "deezer_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
