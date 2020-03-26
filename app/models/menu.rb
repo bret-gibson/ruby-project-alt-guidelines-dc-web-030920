@@ -1,30 +1,9 @@
 class Menu
 
     @@user = nil
-    def self.welcome
-        logo
-        puts "Welcome... Please sign-in"
-        @@user = self.get_user
-        main_menu(@@user)
-    end
-
-    def self.get_user
-       valid = nil
-       while (!valid)
-            input = gets.chomp.upcase
-       
-            if User.all.find {|x| x.name.downcase == input.downcase} != nil
-                user = User.all.find {|x| x.name.downcase == input.downcase}
-                valid = true
-            else
-                puts "There is no user with this name. Please try again"
-                valid = nil
-            end
-        end
-        user
-    end
 
     def self.main_menu(user)
+        @@user = user
         logo
         menu = true
         while (menu)
@@ -41,18 +20,18 @@ class Menu
             choice = gets.chomp
             case choice.to_i
                 when 1
-                    add_song_from_search(@@user)
+                    user.add_song_from_search
                 when 2
                     logo
-                    song_sub_menu(@@user.display_songs)
+                    song_sub_menu(user.display_songs)
                     2.times {puts ""}
                 when 3
                     logo
-                    song_sub_menu(@@user.search_artist)
+                    song_sub_menu(user.search_artist)
                     2.times {puts ""}
                 when 4
                     logo
-                    song_sub_menu(@@user.search_title)
+                    song_sub_menu(user.search_title)
                     2.times {puts ""}
                 when 5
                     logo
@@ -73,7 +52,7 @@ class Menu
             if pick.class != Hash  
                 selected_text = "  You have selected: #{pick.title} by #{pick.artist.name}" 
             else 
-                selected_text = "  You have selected: #{pick[:song]} by #{pick[:artist]}"
+                selected_text = "  You have selected: #{pick[:song]} by #{pick[:artist].name}"
             end
             
             puts self.create_separator(selected_text)
@@ -103,7 +82,12 @@ class Menu
                     Album.show_album_info(pick)
                 when 3
                     logo
-                    pick.songs_by_artist
+                    pick.songs_by_artist if pick.class != Hash
+                    if pick.class == Hash
+                        pick = Song.where(artist_id: pick[:artist].id)[0]
+                        pick.songs_by_artist
+                    end
+                    
                     2.times {puts ""}
                 when 4
                     if pick.class == Hash
@@ -120,16 +104,16 @@ class Menu
                     binding.pry
             end
        end
-     end
+    end
 
-     def self.logout
+    def self.logout
         @@user = nil
-        self.welcome
-     end
+        User.welcome
+    end
 
-     def self.selector(counter)
-    
+    def self.selector(counter)
         valid = nil
+        puts "-------------------------------------------"
         puts "\nENTER SONG NUMBER"
         puts "      OR"
         puts "Enter any other key to go back to main menu"
@@ -142,7 +126,7 @@ class Menu
                 puts "invalid input - try again"
                 valid = nil
             elsif response.class == String
-                Menu.main_menu(self)
+                Menu.main_menu(@@user)
                 valid = true
             end
         end
@@ -165,6 +149,7 @@ end
 
 def logo
     system "clear"
+    2.times {puts ""}
     puts <<-'EOF'     
         888b    888        888       .d8888b.                 888   d8b .d888         
         8888b   888        888      d88P  Y88b                888   Y8Pd88P"          

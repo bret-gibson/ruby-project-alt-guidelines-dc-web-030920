@@ -4,7 +4,7 @@ class Album < ActiveRecord::Base
 
     def self.show_album_info(pick)
         logo
-        album_hash = album_request(pick.album.deezer_id)
+        album_hash = self.album_request(pick.album.deezer_id)
         i = 0
         puts "****************************  ALBUM INFO  **********************************"
         puts "Album Name: #{album_hash["title"]}"
@@ -26,4 +26,9 @@ class Album < ActiveRecord::Base
         Menu.song_sub_menu(song_hash)
         Menu.go_back_with_any_key
     end
+    
+    def self.album_request(deezer_album_id)
+        response_string = RestClient.get("https://api.deezer.com/album/#{deezer_album_id}")
+        response_hash = JSON.parse(response_string)
+    end 
 end

@@ -11,7 +11,7 @@ class Song < ActiveRecord::Base
         Song.all.select {|song| song.artist == self.artist}
         .each {|x| puts "#{i+=1}. #{x.title}"}
         puts "\n-----------------------------------------------------"
-        Menu.go_back_with_any_key
+        Menu.selector(i)
     end
 
     def remove_song
