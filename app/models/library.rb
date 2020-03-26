@@ -8,7 +8,9 @@ class Library < ActiveRecord::Base
         most = Song.all.find {|song| song.id == id[0]}
         logo
         puts "--------------------------------"
+        puts "-                              -"
         puts "--- The Most Popular Song Is ---"
+        puts "-                              -"
         puts "--------------------------------"
         puts ""
         puts "#{most.title} - #{most.artist.name}"

@@ -15,7 +15,6 @@ class Album < ActiveRecord::Base
             puts "#{i+=1}. #{song["title"]} - #{song_time}"
         end
         puts "****************************************************************************"
-        puts "Press the 'Enter' key to go back to song menu"
-        gets.chomp
+        Menu.go_back_with_any_key
     end
 end

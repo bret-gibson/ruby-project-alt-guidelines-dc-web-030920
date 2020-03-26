@@ -7,9 +7,11 @@ class Song < ActiveRecord::Base
 
     def songs_by_artist
         i = 0
-        puts "\nAll songs by #{self.artist.name}:"
-         Song.all.select {|song| song.artist == self.artist}
-         .each {|x| puts "#{i+=1}. #{x.title}"}
+        puts "\nAll songs by #{self.artist.name} in your Library"
+        Song.all.select {|song| song.artist == self.artist}
+        .each {|x| puts "#{i+=1}. #{x.title}"}
+        puts "\n-----------------------------------------------------"
+        Menu.go_back_with_any_key
     end
 
     def remove_song

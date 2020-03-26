@@ -1,13 +1,22 @@
-
-# require 'json'
-# require 'pry'
-# require 'rest-client'
-
-def search_request
+def search_request(user)
+    valid = nil
+    logo
     puts "\nPlease search for a song:"
-    input = gets.chomp.downcase.gsub(" ", "+")
-    response_string = RestClient.get("https://api.deezer.com/search?q=#{input}")
-    response_hash = JSON.parse(response_string)
+    while !valid
+        input = gets.chomp.downcase.gsub(" ", "+")
+        response_string = RestClient.get("https://api.deezer.com/search?q=#{input}")
+        response_hash = JSON.parse(response_string)
+        # binding.pry
+        if response_hash["data"] == []
+            logo
+            puts "\nNo results found, please type a new search or Press ENTER to go back"
+        elsif input == ""
+            Menu.main_menu(user)
+        else
+            valid = true 
+        end
+    end
+    response_hash
 end 
 
 def album_request(deezer_album_id)
@@ -17,7 +26,7 @@ end
 
 def get_single_song_data_from_search(user)
     song_data = {}
-    first_ten_search_results = search_request["data"][0..9]
+    first_ten_search_results = search_request(user)["data"][0..9]
     system "clear"
     full_song_hash = choose_search_result(first_ten_search_results, user)
 
@@ -30,6 +39,8 @@ def get_single_song_data_from_search(user)
 end
 
 def display_selection(selection_data)
+    # selected_text = "  You have selected: #{pick.title} by #{pick.artist.name}"
+    # puts create_separator(selected_text)
     puts "You have selected:\n\n"
     puts "Song: #{selection_data[:song]}"
     puts "Artist: #{selection_data[:artist]}"
@@ -39,6 +50,7 @@ end
 
 # FIX TO MAKE WORK WHEN NO RESULTS/TYPO
 # FIX TO MAKE WORK WHEN THERE ARE LESS THAN FIVE RESULTS
+# POSSIBLY MOVE TO USER CLASS
 def add_song_from_search(user)
     logo
     choice_data = get_single_song_data_from_search(user)
@@ -87,6 +99,7 @@ end
 
 def choose_search_result(result, user)
     i = 1
+    logo
     result[0..4].each do |song_data|
         puts "--------------------------------------------"
         puts ""
@@ -105,7 +118,7 @@ def choose_search_result(result, user)
         deezer_album_id = result[answer -1]["album"]["id"]
         preview = result[answer -1]["preview"]
     elsif answer == 6 && result.count >= 5
-        system "clear"
+        logo
         result[5..9].each do |song_data|
             puts "--------------------------------------------"
             puts ""
@@ -126,4 +139,26 @@ def choose_search_result(result, user)
         result[answer-1]
     end
     result[answer-1]
+end
+
+def spell_check
+    key = "99beba5ebb004eca93e0e6ac47da4bf0"
+    uri = 'https://api.cognitive.microsoft.com'
+    path = '/bing/v7.0/spellcheck?'
+    params = 'mkt=en-us&mode=proof'
+    uri = URI(uri + path + params)
+    uri.query = URI.encode_www_form({
+        # Request parameters
+     'text' => gets.chomp.gsub(" ","+")
+     })
+     request = Net::HTTP::Post.new(uri)
+    request['Content-Type'] = "application/x-www-form-urlencoded"
+    request['Ocp-Apim-Subscription-Key'] = key
+
+    response = Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https') do |http|
+        http.request(request)
+    end
+
+    result = JSON.pretty_generate(JSON.parse(response.body))
+    puts result
 end

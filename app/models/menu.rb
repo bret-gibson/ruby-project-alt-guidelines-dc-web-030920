@@ -33,8 +33,8 @@ class Menu
             puts  "-----------------------------------------------"
             puts "1. Search for a song to add to my library"
             puts "2. See all songs in my library"
-            puts "3. Search for song in my library by ARTIST"
-            puts "4. Search for song in my library by SONG TITLE"
+            puts "3. Search for songs in my library by ARTIST"
+            puts "4. Search for songs in my library by SONG TITLE"
             puts "5. Give me the most popular song among all users"
             puts "6. Logout"
             puts "7. Exit program"
@@ -48,11 +48,11 @@ class Menu
                     2.times {puts ""}
                 when 3
                     logo
-                    @@user.search_artist
+                    song_sub_menu(@@user.search_artist)
                     2.times {puts ""}
                 when 4
                     logo
-                    @@user.search_title
+                    song_sub_menu(@@user.search_title)
                     2.times {puts ""}
                 when 5
                     logo
@@ -70,11 +70,12 @@ class Menu
     def self.song_sub_menu(pick)
         menu = true
         while (menu)
-            puts "--------------------------------------------"
-            puts "----  YOU HAVE SELECTED: #{pick.title}  ---------"    
-            puts "----                                    ---------"    
-            puts "----  Select and action for this song   --------" 
-            puts "--------------------------------------------"
+            selected_text = "  You have selected: #{pick.title} by #{pick.artist.name}"
+            puts create_separator(selected_text)
+            puts "\n#{selected_text}\n\n" 
+            puts create_separator(selected_text)
+            puts "\n  Select and action for this song:\n\n" 
+            # puts create_separator(selected_text)
             # pick = Library.all.find do 
             #     |x| 
             # # binding.pry
@@ -83,7 +84,7 @@ class Menu
             # binding.pry
             puts "1. Play song"
             puts "2. Get song album (album name and list of songs in that album)"
-            puts "3. See more songs by artist"
+            puts "3. See more songs in library by artist"
             if @@user.songs.all.find {|song| song.title == pick.title}
                 puts "4. Remove song from library"
             else
@@ -118,6 +119,35 @@ class Menu
         @@user = nil
         self.welcome
      end
+
+     def self.selector(counter)
+    
+        valid = nil
+        puts "\nENTER SONG NUMBER"
+        puts "      OR"
+        puts "Enter any other key to go back to main menu"
+        puts "\n-------------------------------------------"
+        while !valid
+            response = gets.chomp
+            if response.to_i <= counter && response.to_i >0
+                valid = true 
+            elsif response.to_i > counter || response.to_i < 0
+                puts "invalid input - try again"
+                valid = nil
+            elsif response.class == String
+                Menu.main_menu(self)
+                valid = true
+            end
+        end
+        response
+    end
+
+    def self.go_back_with_any_key
+         puts "Enter any key to go back"
+         gets.chomp
+         logo
+    end
+
 end
 
 def logo
@@ -136,4 +166,10 @@ def logo
                                               888                             "Y88P"' 
     EOF
 2.times {puts ""}
+end
+
+def create_separator(text)
+    line = ""
+    text.length.times {line += "-"}
+    line
 end
