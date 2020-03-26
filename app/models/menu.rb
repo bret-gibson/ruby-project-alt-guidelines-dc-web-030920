@@ -71,9 +71,9 @@ class Menu
         menu = true
         while (menu)
             selected_text = "  You have selected: #{pick.title} by #{pick.artist.name}"
-            puts create_separator(selected_text)
+            puts self.create_separator(selected_text)
             puts "\n#{selected_text}\n\n" 
-            puts create_separator(selected_text)
+            puts self.create_separator(selected_text)
             puts "\n  Select and action for this song:\n\n" 
             # puts create_separator(selected_text)
             # pick = Library.all.find do 
@@ -148,6 +148,12 @@ class Menu
          logo
     end
 
+    def self.create_separator(text)
+        line = ""
+        text.length.times {line += "-"}
+        line
+    end
+
 end
 
 def logo
@@ -166,10 +172,4 @@ def logo
                                               888                             "Y88P"' 
     EOF
 2.times {puts ""}
-end
-
-def create_separator(text)
-    line = ""
-    text.length.times {line += "-"}
-    line
 end

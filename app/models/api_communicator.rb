@@ -26,9 +26,9 @@ end
 
 def get_single_song_data_from_search(user)
     song_data = {}
-    first_ten_search_results = search_request(user)["data"][0..9]
+    search_results = search_request(user)["data"]
     system "clear"
-    full_song_hash = choose_search_result(first_ten_search_results, user)
+    full_song_hash = choose_search_result2(search_results, user)
 
     song_data[:song] =  full_song_hash["title"]
     song_data[:artist] = full_song_hash["artist"]["name"] 
@@ -41,11 +41,18 @@ end
 def display_selection(selection_data)
     # selected_text = "  You have selected: #{pick.title} by #{pick.artist.name}"
     # puts create_separator(selected_text)
-    puts "You have selected:\n\n"
+    # line_arr = ["Song: #{selection_data[:song]}", "Artist: #{selection_data[:artist]}", "Album: #{selection_data[:album]}"]
+    # longest = line_arr.select{|line_item| line_item.max}
+    # binding.pry
+    puts "You have selected:"
+    # puts Menu.create_separator(longest)
+    puts "----------------------------"
     puts "Song: #{selection_data[:song]}"
     puts "Artist: #{selection_data[:artist]}"
     puts "Album: #{selection_data[:album]}"
-    puts "------------------"
+    puts "----------------------------"
+    # puts Menu.create_separator(longest)
+    # puts "\n"
 end
 
 # FIX TO MAKE WORK WHEN NO RESULTS/TYPO
@@ -100,12 +107,14 @@ end
 def choose_search_result(result, user)
     i = 1
     logo
+    
     result[0..4].each do |song_data|
         puts "--------------------------------------------"
         puts ""
         puts "        Song: #{song_data["title"]}"
         puts "  #{i}.    Artist: #{song_data["artist"]["name"]}" 
         puts "        Album: #{song_data["album"]["title"]}"
+        puts ""
         puts "--------------------------------------------"
         i+=1
     end
@@ -129,12 +138,13 @@ def choose_search_result(result, user)
                 puts "  #{i}.    Artist: #{song_data["artist"]["name"]}" 
             end
             puts "        Album: #{song_data["album"]["title"]}"
+            puts ""
             puts "--------------------------------------------"
             i+=1
         end
         puts "Select a number for song or EXIT to exit"
         answer = gets.chomp
-        Menu.main_menu(user) if answer.downcase == "exit"
+        Menu.main_menu(user) if answer.downcase == "exit" || answer == ""
         answer = answer.to_i
         result[answer-1]
     end
@@ -161,4 +171,45 @@ def spell_check
 
     result = JSON.pretty_generate(JSON.parse(response.body))
     puts result
+end
+
+def choose_search_result2(result, user)
+    i = 1
+    logo
+    puts "TOTAL RESULTS: #{result.count}"
+    result.each_with_index do |song_data, index|
+        
+        puts "--------------------------------------------"
+        puts ""
+        puts "        Song: #{song_data["title"]}"
+        puts "  #{i}.    Artist: #{song_data["artist"]["name"]}" 
+        puts "        Album: #{song_data["album"]["title"]}"
+        puts ""
+        puts "--------------------------------------------"
+        i+=1
+        
+        if (index + 1) % 5 == 0 && (index + 1) != result.count
+            puts "Select number for song or hit N for next 5 songs" 
+            puts "Hit Enter to exit" 
+            answer = gets.chomp
+            if answer.to_i <= (index + 1) && answer.to_i > 0
+                return result[(answer.to_i) -1]
+            elsif answer.downcase != "n" && answer.downcase == ""
+                Menu.main_menu(user)
+            else
+                logo
+            end
+        elsif (index + 1) == result.count
+            puts "-------   END OF SEARCH RESULTS   --------"
+            puts "\nSelect number for song"
+            puts "Enter any key to exit"
+            answer = gets.chomp
+            if answer.to_i <= (index + 1) && answer.to_i > 0
+                return result[(answer.to_i) -1]
+            else
+                Menu.main_menu(user)
+            end
+        end
+    end
+    result[answer-1]
 end
