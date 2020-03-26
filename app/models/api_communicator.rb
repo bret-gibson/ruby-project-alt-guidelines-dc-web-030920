@@ -28,7 +28,7 @@ def get_single_song_data_from_search(user)
     song_data = {}
     search_results = search_request(user)["data"]
     system "clear"
-    full_song_hash = choose_search_result2(search_results, user)
+    full_song_hash = choose_search_result(search_results, user)
 
     song_data[:song] =  full_song_hash["title"]
     song_data[:artist] = full_song_hash["artist"]["name"] 
@@ -36,6 +36,47 @@ def get_single_song_data_from_search(user)
     song_data[:deezer_id] = full_song_hash["album"]["id"]
     song_data[:preview_link] = full_song_hash["preview"]
     song_data
+end
+
+def choose_search_result(result, user)
+    i = 1
+    logo
+    puts "TOTAL RESULTS: #{result.count}"
+    result.each_with_index do |song_data, index|
+        
+        puts "--------------------------------------------"
+        puts ""
+        puts "        Song: #{song_data["title"]}"
+        puts "  #{i}.    Artist: #{song_data["artist"]["name"]}" 
+        puts "        Album: #{song_data["album"]["title"]}"
+        puts ""
+        puts "--------------------------------------------"
+        i+=1
+        
+        if (index + 1) % 5 == 0 && (index + 1) != result.count
+            puts "Select number for song or hit N for next 5 songs" 
+            puts "Hit Enter to exit" 
+            answer = gets.chomp
+            if answer.to_i <= (index + 1) && answer.to_i > 0
+                return result[(answer.to_i) -1]
+            elsif answer.downcase != "n" && answer.downcase == ""
+                Menu.main_menu(user)
+            else
+                logo
+            end
+        elsif (index + 1) == result.count
+            puts "-------   END OF SEARCH RESULTS   --------"
+            puts "\nSelect number for song"
+            puts "Enter any key to exit"
+            answer = gets.chomp
+            if answer.to_i <= (index + 1) && answer.to_i > 0
+                return result[(answer.to_i) -1]
+            else
+                Menu.main_menu(user)
+            end
+        end
+    end
+    result[answer-1]
 end
 
 def display_selection(selection_data)
@@ -104,53 +145,6 @@ def add_selection_to_library(data, user)
     end
 end
 
-def choose_search_result(result, user)
-    i = 1
-    logo
-    
-    result[0..4].each do |song_data|
-        puts "--------------------------------------------"
-        puts ""
-        puts "        Song: #{song_data["title"]}"
-        puts "  #{i}.    Artist: #{song_data["artist"]["name"]}" 
-        puts "        Album: #{song_data["album"]["title"]}"
-        puts ""
-        puts "--------------------------------------------"
-        i+=1
-    end
-    puts "Select number for song or hit 6 for next 5 songs"
-    answer = gets.chomp.to_i
-    if answer <= 5
-        song_result = result[answer -1]["title"]
-        artist_result = result[answer -1]["artist"]["name"] 
-        album_result = result[answer -1]["album"]["title"]
-        deezer_album_id = result[answer -1]["album"]["id"]
-        preview = result[answer -1]["preview"]
-    elsif answer == 6 && result.count >= 5
-        logo
-        result[5..9].each do |song_data|
-            puts "--------------------------------------------"
-            puts ""
-            puts "        Song: #{song_data["title"]}"
-            if i > 9
-                puts "  #{i}.   Artist: #{song_data["artist"]["name"]}" 
-            else
-                puts "  #{i}.    Artist: #{song_data["artist"]["name"]}" 
-            end
-            puts "        Album: #{song_data["album"]["title"]}"
-            puts ""
-            puts "--------------------------------------------"
-            i+=1
-        end
-        puts "Select a number for song or EXIT to exit"
-        answer = gets.chomp
-        Menu.main_menu(user) if answer.downcase == "exit" || answer == ""
-        answer = answer.to_i
-        result[answer-1]
-    end
-    result[answer-1]
-end
-
 def spell_check
     key = "99beba5ebb004eca93e0e6ac47da4bf0"
     uri = 'https://api.cognitive.microsoft.com'
@@ -171,45 +165,4 @@ def spell_check
 
     result = JSON.pretty_generate(JSON.parse(response.body))
     puts result
-end
-
-def choose_search_result2(result, user)
-    i = 1
-    logo
-    puts "TOTAL RESULTS: #{result.count}"
-    result.each_with_index do |song_data, index|
-        
-        puts "--------------------------------------------"
-        puts ""
-        puts "        Song: #{song_data["title"]}"
-        puts "  #{i}.    Artist: #{song_data["artist"]["name"]}" 
-        puts "        Album: #{song_data["album"]["title"]}"
-        puts ""
-        puts "--------------------------------------------"
-        i+=1
-        
-        if (index + 1) % 5 == 0 && (index + 1) != result.count
-            puts "Select number for song or hit N for next 5 songs" 
-            puts "Hit Enter to exit" 
-            answer = gets.chomp
-            if answer.to_i <= (index + 1) && answer.to_i > 0
-                return result[(answer.to_i) -1]
-            elsif answer.downcase != "n" && answer.downcase == ""
-                Menu.main_menu(user)
-            else
-                logo
-            end
-        elsif (index + 1) == result.count
-            puts "-------   END OF SEARCH RESULTS   --------"
-            puts "\nSelect number for song"
-            puts "Enter any key to exit"
-            answer = gets.chomp
-            if answer.to_i <= (index + 1) && answer.to_i > 0
-                return result[(answer.to_i) -1]
-            else
-                Menu.main_menu(user)
-            end
-        end
-    end
-    result[answer-1]
 end
