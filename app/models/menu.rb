@@ -70,22 +70,24 @@ class Menu
     def self.song_sub_menu(pick)
         menu = true
         while (menu)
-            selected_text = "  You have selected: #{pick.title} by #{pick.artist.name}"
+            if pick.class != Hash  
+                selected_text = "  You have selected: #{pick.title} by #{pick.artist.name}" 
+            else 
+                selected_text = "  You have selected: #{pick[:song]} by #{pick[:artist]}"
+            end
+            
             puts self.create_separator(selected_text)
             puts "\n#{selected_text}\n\n" 
-            puts self.create_separator(selected_text)
-            puts "\n  Select and action for this song:\n\n" 
-            # puts create_separator(selected_text)
-            # pick = Library.all.find do 
-            #     |x| 
-            # # binding.pry
-            # x.song.title != pick.title
-            # end
-            # binding.pry
+            # puts self.create_separator(selected_text)
+            puts "\n  Select an action for this song:\n\n" 
+            puts create_separator(selected_text)
+       
             puts "1. Play song"
             puts "2. Get song album (album name and list of songs in that album)"
             puts "3. See more songs in library by artist"
-            if @@user.songs.all.find {|song| song.title == pick.title}
+            if pick.class != Hash && @@user.songs.all.find {|song| song.title == pick.title} 
+                puts "4. Remove song from library"
+            elsif pick.class == Hash && @@user.songs.all.find{|song| song.title == pick[:song]}
                 puts "4. Remove song from library"
             else
                 puts "4. Add song to library" 
@@ -104,7 +106,12 @@ class Menu
                     pick.songs_by_artist
                     2.times {puts ""}
                 when 4
-                    pick.remove_song
+                    if pick.class == Hash
+                        new_song = Song.create(title: pick[:song], artist_id: pick[:artist].id, album_id: pick[:album].id, preview_url: pick[:preview])
+                        Library.create(song_id: new_song.id, user_id: @@user.id )
+                    else
+                        pick.remove_song
+                    end
                     main_menu(@@user)
                     2.times {puts ""}
                 when 5

@@ -35,6 +35,7 @@ def get_single_song_data_from_search(user)
     song_data[:album] = full_song_hash["album"]["title"]
     song_data[:deezer_id] = full_song_hash["album"]["id"]
     song_data[:preview_link] = full_song_hash["preview"]
+    song_data[:explicit] = full_song_hash["explicit_lyrics"]
     song_data
 end
 
@@ -96,8 +97,8 @@ def display_selection(selection_data)
     # puts "\n"
 end
 
-# FIX TO MAKE WORK WHEN NO RESULTS/TYPO
-# FIX TO MAKE WORK WHEN THERE ARE LESS THAN FIVE RESULTS
+# FIX TO MAKE WORK WHEN NO RESULTS/TYPO - DONE
+# FIX TO MAKE WORK WHEN THERE ARE LESS THAN FIVE RESULTS - DONE
 # POSSIBLY MOVE TO USER CLASS
 def add_song_from_search(user)
     logo
@@ -111,18 +112,18 @@ def add_selection_to_library(data, user)
     puts "Add song to library? Y/N"
     reply = gets.chomp
     logo
-    if user.age < 18 && data["explicit_lyrics"]
+    if user.age < 18 && data[:explicit]
         puts "Minors are not allowed to add songs with explicit content"
     elsif reply.downcase == "y"
-        artist = Artist.all.find {|artist| artist.name.downcase == data[:artist].downcase}
+        artist = Artist.where(name: data[:artist])[0]
         if artist == nil
             artist = Artist.create(name: data[:artist]) 
         end
-        album = Album.all.find {|album| album.name.downcase == data[:album].downcase}
+        album = Album.where(name: data[:album])[0]
         if album == nil
             album = Album.create(name: data[:album], artist_id: artist.id, deezer_id: data[:deezer_id]) 
         end
-        song = Song.all.find {|song| song.title.downcase == data[:song].downcase && song.artist.name == data[:artist]}
+        song = Song.where(title: data[:song], artist_id: artist.id)[0]
         if song == nil
             song = Song.create(title: data[:song], artist_id: artist.id, album_id: album.id, preview_url: data[:preview_link]) 
         end
@@ -148,21 +149,21 @@ end
 def spell_check
     key = "99beba5ebb004eca93e0e6ac47da4bf0"
     uri = 'https://api.cognitive.microsoft.com'
-    path = '/bing/v7.0/spellcheck?'
+    path = '/bing/v5.0/spellcheck'
     params = 'mkt=en-us&mode=proof'
-    uri = URI(uri + path + params)
+    uri = URI(uri + path)
     uri.query = URI.encode_www_form({
         # Request parameters
      'text' => gets.chomp.gsub(" ","+")
      })
-     request = Net::HTTP::Post.new(uri)
+    request = Net::HTTP::Post.new(uri)
     request['Content-Type'] = "application/x-www-form-urlencoded"
     request['Ocp-Apim-Subscription-Key'] = key
 
     response = Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https') do |http|
         http.request(request)
     end
-
-    result = JSON.pretty_generate(JSON.parse(response.body))
+    binding.pry
+    result = JSON.parse(response)
     puts result
 end

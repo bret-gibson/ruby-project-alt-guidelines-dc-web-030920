@@ -80,9 +80,7 @@ class User < ActiveRecord::Base
     puts "Enter Artist to Search"
     search = gets.chomp.titleize
     artist_result = Artist.where(name: search)[0]
-    # binding.pry
     song_results = Song.where(artist_id: artist_result.id)
-    # binding.pry
     i = 0
     puts "-----------------------------------"
     song_results.each {|song| puts "#{i+=1}. #{song.title} - #{artist_result.name}"}
