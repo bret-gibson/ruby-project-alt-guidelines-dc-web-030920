@@ -118,8 +118,8 @@ class User < ActiveRecord::Base
         song_results = Song.where(artist_id: artist_result.id)
         i = 0
         puts "--------------------------------------------".green
-        puts "\n Songs by #{artist_result.name}:\n"
-        song_results.each {|song| puts " \n #{i+=1}. #{song.title}"}
+        puts "\n Songs by #{artist_result.name}:\n\n"
+        song_results.each {|song| puts " #{i+=1}. #{song.title}"}
         puts "\n --------------------------------------------".green
         n = Menu.selector(i)
         pick = song_results[(n.to_i)-1]
