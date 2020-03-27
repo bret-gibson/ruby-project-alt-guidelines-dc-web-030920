@@ -4,7 +4,6 @@ class Song < ActiveRecord::Base
     has_many :libraries
     has_many :users, through: :libraries
 
-
     def songs_by_artist
         i = 0
         puts "--------------------------------------------".green
@@ -28,8 +27,8 @@ class Song < ActiveRecord::Base
 
     def play_song
         Launchy.open(self.preview_url)
-        Menu.dancing_guy
         puts "\n---------------------------------------------------------------\n".green
+        Menu.dancing_guy
         puts "Now playing preview of #{self.title} by #{self.artist.name} in your browser."
         puts "Press ENTER key to go back to the song menu"
         puts "\n---------------------------------------------------------------".green

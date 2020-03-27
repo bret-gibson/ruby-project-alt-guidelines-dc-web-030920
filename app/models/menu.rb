@@ -43,7 +43,9 @@ class Menu
                     Library.most_added
                 when 6
                     pick = user.songs.sample
+                    self.logo
                     pick.play_song
+                    
                 when 7
                     if user.gift_cards >= 1
                         user.balance += 10
@@ -76,8 +78,6 @@ class Menu
             
             puts self.create_separator(selected_text)
             puts "\n#{selected_text}\n\n" 
-            # puts self.create_separator(selected_text)
-            # puts "\n  Select an action for this song:\n\n" 
             puts create_separator(selected_text)
             puts "\nSelect an action for this song:\n\n" 
        
@@ -120,10 +120,8 @@ class Menu
                     2.times {puts ""}
                 when 4
                     if pick.class == Hash
-                        # binding.pry
                         user = @@user
                         if user.balance >= 1
-                            # binding.pry
                             new_song = Song.create(title: pick[:song], artist_id: pick[:artist].id, album_id: pick[:album].id, preview_url: pick[:preview_link])
                             Library.create(song_id: new_song.id, user_id: @@user.id )
                             user = User.where(id: @@user.id)[0]
@@ -131,11 +129,10 @@ class Menu
                             user.save
                         else
                             Menu.logo
-                            puts "Balance is $0.00".red
+                            puts "Balance is $0.00".light_red
                             puts "Press enter to continue"
                             gets.chomp
                         end
-                        # binding.pry
                     else
                         pick.remove_song
                         user = @@user
@@ -159,7 +156,6 @@ class Menu
 
     def self.selector(counter)
         valid = nil
-        # puts "-------------------------------------------"
         puts "\n         Please enter a song number"
         puts "                      OR"
         puts " Enter any other key to go back to main menu"
@@ -193,7 +189,6 @@ class Menu
     end
 
     def self.logo
-        # binding.pry
         system "clear"
         2.times {puts ""}
         puts <<-'EOF'.green 
@@ -212,25 +207,26 @@ class Menu
     end
 
 
-def self.dancing_guy
-    dancer = 
-    "⊂_ヽ
-    　 ＼＼ ＿＿＿＿
-    　　 ＼( ͡° ͜ʖ ͡°)
-    　　　 <　⌒ ヽ 
-    　　　/ 　 へ＼
-    　　 /　　/　＼＼
-    　　 ﾚ　ノ　　 ヽ_つ
-    　　/　/
-    　 /　/|
-    　(　( ヽ
-    　|　|、 ＼
-    　| 丿 ＼  )
-    　| |　 ) /
-    `ノ )　 Lﾉ
-    (_／".magenta
-    return dancer
-end
+    def self.dancing_guy
+        dancer = <<-'EOF'.magenta
+                        ⊂_ヽ
+                        　 ＼＼ ＿^^＿
+                        　　 ＼( ͡° ͜ʖ ͡°)
+                        　　　 <　⌒ ヽ 
+                        　　　/ 　 へ＼
+                        　　 /　　/　＼＼
+                        　　 ﾚ　ノ　　 ヽ_つ
+                        　　/　/
+                        　 /　/|
+                        　(　( ヽ
+                        　|　|、 ＼
+                        　| 丿 ＼  )
+                        　| |　 ) /
+                        `ノ )　 Lﾉ
+                        (_／
+        EOF
+        puts dancer
+    end
 end
 
 # def logo

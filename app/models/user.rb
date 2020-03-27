@@ -36,7 +36,8 @@ class User < ActiveRecord::Base
         i = 1
 
         songs.each do |song| 
-            puts " #{i}. #{song.title} - #{song.artist.name}" 
+            puts " #{i}.  #{song.title} - #{song.artist.name}" if i <= 9 
+            puts " #{i}. #{song.title} - #{song.artist.name}" if i >= 10 
             i+=1
         end
 
@@ -67,10 +68,10 @@ class User < ActiveRecord::Base
             puts "--------------------------------------------".green
             if result == []
                 Menu.logo
-                puts "------------------------------------------------------".red
+                puts "------------------------------------------------------".light_red
                 puts "Sorry no song Found!" if result == []
                 puts "Type a new song or hit 'Enter' to return to main menu"
-                puts "------------------------------------------------------".red
+                puts "------------------------------------------------------".light_red
                 search = gets.chomp.titleize
                 if search == ""
                     Menu.main_menu(self)
@@ -94,17 +95,13 @@ class User < ActiveRecord::Base
         valid = nil
             search = gets.chomp.titleize
         while !valid
-           
-                # if !Artist.where(name: search)[0] && search != ""
                 if Artist.where(name: search) == []
                     Menu.logo
-                    puts "------------------------------------------------------".red
+                    puts "------------------------------------------------------".light_red
                     puts "Sorry no artist found!"
                     puts "Type a new artist or hit 'Enter' to return to main menu"
-                    puts "------------------------------------------------------".red
+                    puts "------------------------------------------------------".light_red
                     search = gets.chomp.titleize
-                    # puts "No artist found! Enter a new search"
-                    # puts "Or, press 'Enter' to exit"
                     if search == ""
                         Menu.main_menu(self)
                     else    
@@ -113,23 +110,9 @@ class User < ActiveRecord::Base
                     end
                 elsif Artist.where(name: search) != []
                     valid = true
+                    Menu.logo
                 end
         end
-
-        # if result == []
-        #     Menu.logo
-        #     puts "------------------------------------------------------".red
-        #     puts "Sorry no Song Found" if result == []
-        #     puts "Type a new song or hit 'Enter' to return to main menu"
-        #     puts "------------------------------------------------------".red
-        #     search = gets.chomp.titleize
-        #     if search == ""
-        #         Menu.main_menu(self)
-        #     else
-        #         Menu.logo
-        #         result=nil
-        #     end
-        # end
 
         artist_result = Artist.where(name: search)[0]
         song_results = Song.where(artist_id: artist_result.id)
@@ -141,9 +124,9 @@ class User < ActiveRecord::Base
         n = Menu.selector(i)
         pick = song_results[(n.to_i)-1]
         puts " #{song_results[(n.to_i)-1].title} - #{song_results[(n.to_i)-1].artist.name}"
-        # puts "--------------------------------------------".green
         Menu.logo
         pick
+        
     end
     
     def add_song_from_search
@@ -250,10 +233,13 @@ class User < ActiveRecord::Base
         reply = gets.chomp
         Menu.logo
         if self.age < 18 && data[:explicit]
-            puts "Minors are not allowed to add songs with explicit content".red
+            puts " Minors are not allowed to add songs with explicit content".light_red
+            puts " press Enter to continue"
+            gets.chomp
+            Menu.logo
         elsif reply.downcase == "y"
             if self.balance <= 0.00
-                puts " Cannot add song: Balance is $0.00".red
+                puts " Cannot add song: Balance is $0.00".light_red
                 puts " Press enter to continue"
                 gets.chomp
                 Menu.logo

@@ -1,6 +1,4 @@
-
 require_relative '../config/environment'
-
 
 def detect_terminal_size
     if (ENV['COLUMNS'] =~ /^\d+$/) && (ENV['LINES'] =~ /^\d+$/)
@@ -15,6 +13,5 @@ def detect_terminal_size
   rescue
     nil
   end
-
-
+  
 User.welcome
