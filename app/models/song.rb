@@ -16,7 +16,7 @@ class Song < ActiveRecord::Base
 
     def remove_song
         system "clear"
-        logo
+        Menu.logo
         Library.where(song_id: self.id).destroy_all
         reload
     end
@@ -30,7 +30,7 @@ class Song < ActiveRecord::Base
         puts "Now playing preview of #{self.title} by #{self.artist.name}"
         puts "Press any key to go back to the song menu"
         gets.chomp
-        logo
+        Menu.logo
     end
 
     def self.stop_song

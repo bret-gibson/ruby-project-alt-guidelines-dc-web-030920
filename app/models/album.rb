@@ -3,18 +3,26 @@ class Album < ActiveRecord::Base
     belongs_to :artist
 
     def self.show_album_info(pick)
-        logo
+        Menu.logo
         album_hash = self.album_request(pick.album.deezer_id)
         i = 0
-        puts "****************************  ALBUM INFO  **********************************"
-        puts "Album Name: #{album_hash["title"]}"
+        puts "*************************************".green +  " ALBUM INFO " + "****************************************".green
+        puts "\nAlbum Name: #{album_hash["title"]}"
         puts "Album Artist Name: #{album_hash["artist"]["name"]}"
-        puts "Songs (#{album_hash["nb_tracks"]}):"
+        puts "No. of Tracks (#{album_hash["nb_tracks"]})\n\n"
+        puts "#   Title                                                                          Length\n\n"
         album_hash["tracks"]["data"].each do |song|
             song_time = Time.at(song["duration"]).utc.strftime("%M:%S")
-            puts "#{i+=1}. #{song["title"]} - #{song_time}"
+            song_title = song["title"]
+            num = i+=1
+            line = "#{song_title}#{album_lines(song_title.length)}#{song_time}"
+            if num < 10
+                puts "#{num}.  #{line}"
+            else
+                puts "#{num}. #{line}"
+            end
         end
-        puts "****************************************************************************"
+        puts "\n******************************************************************************************".green
         i = Menu.selector(i).to_i
         i -= 1
 
@@ -31,4 +39,22 @@ class Album < ActiveRecord::Base
         response_string = RestClient.get("https://api.deezer.com/album/#{deezer_album_id}")
         response_hash = JSON.parse(response_string)
     end 
+
+    
+end
+
+def album_lines(space)
+    dot = " ."
+    num = ((77 - space.to_f) / 2)
+    # binding.pry
+    # if num % 2 == 0 
+    #     num.ceil.times {dot += " ."}
+    #     dot += " "
+    if num % 1 != 0
+        num.ceil.times {dot += " ."}
+    else
+        (num.ceil).times {dot += " ."}
+        dot += " "
+    end
+    dot
 end

@@ -4,8 +4,8 @@ class User < ActiveRecord::Base
     @@user = nil
     
     def self.welcome
-        logo
-        puts "Welcome... Please sign-in"
+        Menu.logo
+        puts "Welcome... Please sign-in\n\n"
         @@user = self.get_user
         Menu.main_menu(@@user)
     end
@@ -40,13 +40,13 @@ class User < ActiveRecord::Base
         n = Menu.selector(i)
         pick = songs[(n.to_i)-1]
         puts "#{songs[(n.to_i)-1].title} - #{songs[(n.to_i)-1].artist.name}"
-        logo
+        Menu.logo
         pick
     end
 
     def search_title
         result = nil
-        logo
+        Menu.logo
         puts "---------------------"
         puts "Enter Title to Search"
         puts "---------------------"
@@ -60,7 +60,7 @@ class User < ActiveRecord::Base
             end
             puts "-------------------------"
             if result == []
-                logo
+                Menu.logo
                 puts "------------------------------------------------------"
                 puts "Sorry no Song Found" if result == []
                 puts "Type a new song or hit 'Enter' to return to main menu"
@@ -69,7 +69,7 @@ class User < ActiveRecord::Base
                 if search == ""
                     Menu.main_menu(self)
                 else
-                    logo
+                    Menu.logo
                     result=nil
                 end
             end
@@ -77,7 +77,7 @@ class User < ActiveRecord::Base
         n = Menu.selector(i)
         pick = result[(n.to_i)-1]
         puts "#{result[(n.to_i)-1].title} - #{result[(n.to_i)-1].artist.name}"
-        logo
+        Menu.logo
         pick
     end
 
@@ -87,7 +87,7 @@ class User < ActiveRecord::Base
         while !valid
             search = gets.chomp.titleize
                 if !Artist.where(name: search)[0] && search != ""
-                    logo
+                    Menu.logo
                     puts "No artist found! Enter a new search:"
                     puts "Or, press 'Enter' to exit"
                 elsif search == ""
@@ -105,14 +105,14 @@ class User < ActiveRecord::Base
         n = Menu.selector(i)
         pick = song_results[(n.to_i)-1]
         puts "#{song_results[(n.to_i)-1].title} - #{song_results[(n.to_i)-1].artist.name}"
-        logo
+        Menu.logo
         pick
     end
     
     def add_song_from_search
-        logo
+        Menu.logo
         choice_data = get_single_song_data_from_search
-        logo
+        Menu.logo
         display_selection(choice_data)
         add_selection_to_library(choice_data)
     end
@@ -134,14 +134,14 @@ class User < ActiveRecord::Base
     
     def search_request
         valid = nil
-        logo
+        Menu.logo
         puts "\nPlease search for a song:"
         while !valid
             input = gets.chomp.downcase.gsub(" ", "+")
             response_string = RestClient.get("https://api.deezer.com/search?q=#{input}")
             response_hash = JSON.parse(response_string)
             if response_hash["data"] == []
-                logo
+                Menu.logo
                 puts "\nNo results found, please type a new search or Press ENTER to go back"
             elsif input == ""
                 Menu.main_menu
@@ -154,7 +154,7 @@ class User < ActiveRecord::Base
     
     def choose_search_result(result)
         i = 1
-        logo
+        Menu.logo
         puts "TOTAL RESULTS: #{result.count}"
         result.each_with_index do |song_data, index|
             
@@ -176,7 +176,7 @@ class User < ActiveRecord::Base
                 elsif answer.downcase != "n" && answer.downcase == ""
                     Menu.main_menu(self)
                 else
-                    logo
+                    Menu.logo
                 end
             elsif (index + 1) == result.count
                 puts "-------   END OF SEARCH RESULTS   --------"
@@ -208,10 +208,11 @@ class User < ActiveRecord::Base
     def add_selection_to_library(data)
         puts "Add song to library? Y/N"
         reply = gets.chomp
-        logo
+        Menu.logo
         if self.age < 18 && data[:explicit]
-            puts "Minors are not allowed to add songs with explicit content"
+            puts "Minors are not allowed to add songs with explicit content".red
         elsif reply.downcase == "y"
+            
             artist = Artist.where(name: data[:artist])[0]
             if artist == nil
                 artist = Artist.create(name: data[:artist]) 
@@ -226,18 +227,23 @@ class User < ActiveRecord::Base
             end
             if Library.all.find {|lib| lib.user_id == self.id && lib.song_id == song.id} == nil
                 Library.create(user_id: self.id, song_id: song.id)
-                logo
+                self.balance -= 1.00
+                binding.pry
+                
+              
+                Menu.logo
                 puts "\n#{data[:song]} by #{data[:artist]} has been added to your library! \n\n"
                 puts "\n Press 'ENTER' to return to Main Menu"
                 gets.chomp
                 Menu.main_menu(self)
             else
-                logo
+                Menu.logo
                 puts "\n!!!!!   Song already exists in library    !!!!\n\n"
                 puts "\n Press 'ENTER' to return to Main Menu"
                 gets.chomp
                 Menu.main_menu(self)
             end
+
         else
             Menu.main_menu(self)
         end

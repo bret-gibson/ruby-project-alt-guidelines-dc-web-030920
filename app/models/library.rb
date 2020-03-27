@@ -7,7 +7,6 @@ class Library < ActiveRecord::Base
         
         id = Library.all.map {|lib| lib.song_id}.group_by(&:itself).max_by {|key, value| value.count}
         most = Song.all.find {|song| song.id == id[0]}
-        binding.pry
         logo
         puts "--------------------------------"
         puts ""
