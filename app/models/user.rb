@@ -160,11 +160,11 @@ class User < ActiveRecord::Base
             input = gets.chomp.downcase.gsub(" ", "+")
             response_string = RestClient.get("https://api.deezer.com/search?q=#{input}")
             response_hash = JSON.parse(response_string)
-            if response_hash["data"] == []
+            if response_hash["data"] == [] 
                 Menu.logo
                 puts "\nNo results found, please type a new search or Press ENTER to go back"
             elsif input == ""
-                Menu.main_menu
+                Menu.main_menu(self)
             else
                 valid = true 
             end
