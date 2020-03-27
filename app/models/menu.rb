@@ -16,8 +16,11 @@ class Menu
             puts "  4. Search for songs in my library by SONG TITLE"
             puts "  5. Give me the most popular song among all users"
             puts "  6. Play Random Song from My Library"
-            puts "  7. Logout"
-            puts "  8. Exit program"
+            puts "  -"
+            puts "  7. Redeem Gift Card".green if user.gift_cards >=1
+            puts "  7. Redeem Gift Card".gray if user.gift_cards <= 0
+            puts "  8. Logout"
+            puts "  9. Exit program"
             puts  " ------------------------------------------------\n\n".green
             choice = gets.chomp
             case choice.to_i
@@ -42,11 +45,19 @@ class Menu
                     pick = user.songs.sample
                     pick.play_song
                 when 7
-                    Menu.logout
+                    if user.gift_cards >= 1
+                        user.balance += 10
+                        user.save
+                        user.gift_cards -= 1
+                        user.save
+                        self.logo
+                    end
                 when 8
+                    Menu.logout
+                when 9
                     system "clear"
                     exit
-                when 9
+                when 10
                     binding.pry
             end
        end
@@ -101,14 +112,24 @@ class Menu
                     2.times {puts ""}
                 when 4
                     if pick.class == Hash
-                        new_song = Song.create(title: pick[:song], artist_id: pick[:artist].id, album_id: pick[:album].id, preview_url: pick[:preview])
-                        Library.create(song_id: new_song.id, user_id: @@user.id )
-                        user = User.where(id: @@user.id)[0]
-                        user.balance -= 1.00
-                        user.save
+                        # binding.pry
+                        user = @@user
+                        if user.balance
+                            # binding.pry
+                            new_song = Song.create(title: pick[:song], artist_id: pick[:artist].id, album_id: pick[:album].id, preview_url: pick[:preview_link])
+                            Library.create(song_id: new_song.id, user_id: @@user.id )
+                            user = User.where(id: @@user.id)[0]
+                            user.balance -= 1.00
+                            user.save
+                        else
+                            puts "Balance is $0.00".red
+                        end
                         # binding.pry
                     else
                         pick.remove_song
+                        user = @@user
+                        user.balance += 1
+                        user.save
                     end
                     main_menu(@@user)
                     2.times {puts ""}

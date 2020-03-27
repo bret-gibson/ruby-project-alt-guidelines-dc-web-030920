@@ -4,10 +4,10 @@ Library.destroy_all
 Artist.destroy_all
 Album.destroy_all
 
-user1 = User.create(name: "Alex", age: 37, balance: 16.00)
-user2 = User.create(name: "Bret", age: 24, balance: 29.00)
-user3 = User.create(name: "Little Timmy", age:7, balance: 10.00)
-user4 = User.create(name: "Chine", age: 20, balance: 50)
+user1 = User.create(name: "Alex", age: 37, balance: 16.00, gift_cards: 5)
+user2 = User.create(name: "Bret", age: 24, balance: 29.00, gift_cards: 4)
+user3 = User.create(name: "Little Timmy", age:7, balance: 0.00, gift_cards: 1)
+user4 = User.create(name: "Chine", age: 20, balance: 50, gift_cards: 2)
 
 artist1 = Artist.create(name: "Roddy Ricch")
 artist2 = Artist.create(name: "Dua Lipa")

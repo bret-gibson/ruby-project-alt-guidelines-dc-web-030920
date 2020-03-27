@@ -213,7 +213,7 @@ class User < ActiveRecord::Base
             puts "Minors are not allowed to add songs with explicit content".red
         elsif reply.downcase == "y"
             if self.balance <= 0.00
-                puts "U BROKE"
+                puts "Balance is $0.00".red
                 gets.chomp
             else
                 artist = Artist.where(name: data[:artist])[0]
@@ -232,7 +232,7 @@ class User < ActiveRecord::Base
                     Library.create(user_id: self.id, song_id: song.id)
                     self.balance -= 1.00
                     self.save
-                    binding.pry
+                    # binding.pry
                     
                 
                     Menu.logo

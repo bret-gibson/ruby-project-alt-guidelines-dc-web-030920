@@ -7,7 +7,7 @@ class Library < ActiveRecord::Base
         
         id = Library.all.map {|lib| lib.song_id}.group_by(&:itself).max_by {|key, value| value.count}
         most = Song.all.find {|song| song.id == id[0]}
-        logo
+        Menu.logo
         puts "--------------------------------"
         puts ""
         puts "--- The Most Popular Song Is ---"
