@@ -7,10 +7,11 @@ class Song < ActiveRecord::Base
 
     def songs_by_artist
         i = 0
-        puts "\nAll songs by #{self.artist.name} in your Library"
+        puts "--------------------------------------------".green
+        puts "\n All songs by #{self.artist.name} in your Library\n\n"
         Song.all.select {|song| song.artist == self.artist}
-        .each {|x| puts "#{i+=1}. #{x.title}"}
-        puts "\n-----------------------------------------------------"
+        .each {|x| puts " #{i+=1}. #{x.title}"}
+        puts "\n--------------------------------------------".green
         Menu.selector(i)
     end
 
@@ -27,8 +28,11 @@ class Song < ActiveRecord::Base
 
     def play_song
         Launchy.open(self.preview_url)
-        puts "Now playing preview of #{self.title} by #{self.artist.name}"
-        puts "Press any key to go back to the song menu"
+        Menu.dancing_guy
+        puts "\n---------------------------------------------------------------\n".green
+        puts "Now playing preview of #{self.title} by #{self.artist.name} in your browser."
+        puts "Press ENTER key to go back to the song menu"
+        puts "\n---------------------------------------------------------------".green
         gets.chomp
         Menu.logo
     end

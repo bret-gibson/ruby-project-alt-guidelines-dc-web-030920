@@ -12,7 +12,6 @@ class User < ActiveRecord::Base
 
     def self.get_user
     valid = nil
-    
         while !valid
             input = gets.chomp.titleize
             if User.where(name: input.titleize)[0] != nil
@@ -28,15 +27,20 @@ class User < ActiveRecord::Base
 
     def display_songs
         reload
-        puts "--------------------------"
-        puts "Song Title --- Artist Name"
-        puts "--------------------------"
+        longest = songs.map {|x| x.title.length + x.artist.name.length}
+        length = longest.max.to_i
+        
+        puts " "+line_art(length).green+"------".green
+        puts " Song Title --- Artist Name"
+        puts " "+line_art(length).green+"------".green
         i = 1
+
         songs.each do |song| 
-            puts "#{i}. #{song.title} - #{song.artist.name}" 
+            puts " #{i}. #{song.title} - #{song.artist.name}" 
             i+=1
         end
-        puts "---------------------------------------------"
+
+        puts " "+line_art(length).green+"------".green
         n = Menu.selector(i)
         pick = songs[(n.to_i)-1]
         puts "#{songs[(n.to_i)-1].title} - #{songs[(n.to_i)-1].artist.name}"
@@ -47,24 +51,26 @@ class User < ActiveRecord::Base
     def search_title
         result = nil
         Menu.logo
-        puts "---------------------"
-        puts "Enter Title to Search"
-        puts "---------------------"
+        puts "---------------------\n".green
+        puts "Enter Title to Search\n\n"
+        puts "---------------------".green
         search = gets.chomp.titleize
         while !result
+            Menu.logo
             result = Song.where(title: search)
+            puts "--------------------------------------------\n".green
             puts "\nResults:"
             i=0
             result.each do |song|
-                puts "#{i+=1}. #{song.title} - #{song.artist.name}" if result
+                puts "#{i+=1}. #{song.title} - #{song.artist.name}\n" if result
             end
-            puts "-------------------------"
+            puts "--------------------------------------------".green
             if result == []
                 Menu.logo
-                puts "------------------------------------------------------"
-                puts "Sorry no Song Found" if result == []
+                puts "------------------------------------------------------".red
+                puts "Sorry no song Found!" if result == []
                 puts "Type a new song or hit 'Enter' to return to main menu"
-                puts "------------------------------------------------------"
+                puts "------------------------------------------------------".red
                 search = gets.chomp.titleize
                 if search == ""
                     Menu.main_menu(self)
@@ -82,29 +88,60 @@ class User < ActiveRecord::Base
     end
 
     def search_artist
-        puts "Enter Artist to Search"
+        puts "----------------------\n".green
+        puts "Enter Artist to Search\n\n"
+        puts "----------------------".green
         valid = nil
-        while !valid
             search = gets.chomp.titleize
-                if !Artist.where(name: search)[0] && search != ""
+        while !valid
+           
+                # if !Artist.where(name: search)[0] && search != ""
+                if Artist.where(name: search) == []
                     Menu.logo
-                    puts "No artist found! Enter a new search:"
-                    puts "Or, press 'Enter' to exit"
-                elsif search == ""
-                    Menu.main_menu(self)
-                else    
+                    puts "------------------------------------------------------".red
+                    puts "Sorry no artist found!"
+                    puts "Type a new artist or hit 'Enter' to return to main menu"
+                    puts "------------------------------------------------------".red
+                    search = gets.chomp.titleize
+                    # puts "No artist found! Enter a new search"
+                    # puts "Or, press 'Enter' to exit"
+                    if search == ""
+                        Menu.main_menu(self)
+                    else    
+                        valid = nil
+                        Menu.logo
+                    end
+                elsif Artist.where(name: search) != []
                     valid = true
                 end
         end
 
+        # if result == []
+        #     Menu.logo
+        #     puts "------------------------------------------------------".red
+        #     puts "Sorry no Song Found" if result == []
+        #     puts "Type a new song or hit 'Enter' to return to main menu"
+        #     puts "------------------------------------------------------".red
+        #     search = gets.chomp.titleize
+        #     if search == ""
+        #         Menu.main_menu(self)
+        #     else
+        #         Menu.logo
+        #         result=nil
+        #     end
+        # end
+
         artist_result = Artist.where(name: search)[0]
         song_results = Song.where(artist_id: artist_result.id)
         i = 0
-        puts "-----------------------------------"
-        song_results.each {|song| puts "#{i+=1}. #{song.title} - #{artist_result.name}"}
+        puts "--------------------------------------------".green
+        puts "\n Songs by #{artist_result.name}:\n"
+        song_results.each {|song| puts " \n #{i+=1}. #{song.title}"}
+        puts "\n --------------------------------------------".green
         n = Menu.selector(i)
         pick = song_results[(n.to_i)-1]
-        puts "#{song_results[(n.to_i)-1].title} - #{song_results[(n.to_i)-1].artist.name}"
+        puts " #{song_results[(n.to_i)-1].title} - #{song_results[(n.to_i)-1].artist.name}"
+        # puts "--------------------------------------------".green
         Menu.logo
         pick
     end
@@ -158,18 +195,20 @@ class User < ActiveRecord::Base
         puts "TOTAL RESULTS: #{result.count}"
         result.each_with_index do |song_data, index|
             
-            puts "--------------------------------------------"
+            puts "-----------------------------------------------".green
             puts ""
             puts "        Song: #{song_data["title"]}"
-            puts "  #{i}.    Artist: #{song_data["artist"]["name"]}" 
+            puts "  #{i}.    Artist: #{song_data["artist"]["name"]}" if i <=9
+            puts "  #{i}.   Artist: #{song_data["artist"]["name"]}" if i >=10
             puts "        Album: #{song_data["album"]["title"]}"
             puts ""
-            puts "--------------------------------------------"
+            puts "-----------------------------------------------".green
             i+=1
             
             if (index + 1) % 5 == 0 && (index + 1) != result.count
-                puts "Select number for song or hit N for next 5 songs" 
-                puts "Hit Enter to exit" 
+                puts "Please enter a song number or hit N for next 5 songs" 
+               # (#{((index+2) -5)} - #{(index + 1)})
+                puts "Hit 'Enter' to exit" 
                 answer = gets.chomp
                 if answer.to_i <= (index + 1) && answer.to_i > 0
                     return result[(answer.to_i) -1]
@@ -179,9 +218,10 @@ class User < ActiveRecord::Base
                     Menu.logo
                 end
             elsif (index + 1) == result.count
-                puts "-------   END OF SEARCH RESULTS   --------"
-                puts "\nSelect number for song"
-                puts "Enter any key to exit"
+                puts "-------------".green + " END OF SEARCH RESULTS ".light_blue  + "-----------".green
+                puts "\nPlease enter a song number"
+               # (#{index} - #{result.count})
+                puts "Or, enter any other key to exit"
                 answer = gets.chomp
                 if answer.to_i <= (index + 1) && answer.to_i > 0
                     return result[(answer.to_i) -1]
@@ -194,27 +234,29 @@ class User < ActiveRecord::Base
     end
     
     def display_selection(selection_data)
-        puts "You have selected:"
-        # puts Menu.create_separator(longest)
-        puts "----------------------------"
-        puts "Song: #{selection_data[:song]}"
-        puts "Artist: #{selection_data[:artist]}"
-        puts "Album: #{selection_data[:album]}"
-        puts "----------------------------"
-        # puts Menu.create_separator(longest)
-        # puts "\n"
+        line_arr = ["Song: #{selection_data[:song]}", "Artist: #{selection_data[:artist]}",
+        "Album: #{selection_data[:album]}"]
+        longest_line = line_arr.max_by(&:length)
+        puts " You have selected:\n\n"
+        puts " "+Menu.create_separator(longest_line)
+        puts "\n Song: #{selection_data[:song]}"
+        puts " Artist: #{selection_data[:artist]}"
+        puts " Album: #{selection_data[:album]}\n\n"
+        puts " "+Menu.create_separator(longest_line)
     end
     
     def add_selection_to_library(data)
-        puts "Add song to library? Y/N"
+        puts " Add song to library? Y/N"
         reply = gets.chomp
         Menu.logo
         if self.age < 18 && data[:explicit]
             puts "Minors are not allowed to add songs with explicit content".red
         elsif reply.downcase == "y"
             if self.balance <= 0.00
-                puts "Balance is $0.00".red
+                puts " Cannot add song: Balance is $0.00".red
+                puts " Press enter to continue"
                 gets.chomp
+                Menu.logo
             else
                 artist = Artist.where(name: data[:artist])[0]
                 if artist == nil
@@ -231,19 +273,16 @@ class User < ActiveRecord::Base
                 if Library.all.find {|lib| lib.user_id == self.id && lib.song_id == song.id} == nil
                     Library.create(user_id: self.id, song_id: song.id)
                     self.balance -= 1.00
-                    self.save
-                    # binding.pry
-                    
-                
+                    self.save                    
                     Menu.logo
-                    puts "\n#{data[:song]} by #{data[:artist]} has been added to your library! \n\n"
-                    puts "\n Press 'ENTER' to return to Main Menu"
+                    puts "\n#{data[:song]} by #{data[:artist]} has been" + " added ".green + "to your library! \n\n"
+                    puts "\nPress 'ENTER' to return to Main Menu"
                     gets.chomp
                     Menu.main_menu(self)
                 else
                     Menu.logo
                     puts "\n!!!!!   Song already exists in library    !!!!\n\n"
-                    puts "\n Press 'ENTER' to return to Main Menu"
+                    puts "\n     Press 'ENTER' to return to Main Menu"
                     gets.chomp
                     Menu.main_menu(self)
                 end
@@ -251,5 +290,11 @@ class User < ActiveRecord::Base
         else
             Menu.main_menu(self)
         end
+    end
+
+    def line_art(size)
+        l = ""
+        size.times {l += "-"}
+        l
     end
 end

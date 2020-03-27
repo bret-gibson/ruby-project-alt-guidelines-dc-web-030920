@@ -26,14 +26,10 @@ class Album < ActiveRecord::Base
         i = Menu.selector(i).to_i
         i -= 1
 
-
         artist = Artist.where(name: album_hash["artist"]["name"])[0]
         if artist == nil
             artist = Artist.create(name: album_hash["artist"]["name"]) 
         end
-
-
-
 
         song_hash = {}
         song_hash[:song] = album_hash["tracks"]["data"][i]["title"]

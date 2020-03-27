@@ -59,6 +59,8 @@ class Menu
                     exit
                 when 10
                     binding.pry
+                when 0
+                    Menu.logo
             end
        end
     end
@@ -75,8 +77,9 @@ class Menu
             puts self.create_separator(selected_text)
             puts "\n#{selected_text}\n\n" 
             # puts self.create_separator(selected_text)
-            puts "\n  Select an action for this song:\n\n" 
+            # puts "\n  Select an action for this song:\n\n" 
             puts create_separator(selected_text)
+            puts "\nSelect an action for this song:\n\n" 
        
             puts "1. Play song"
             puts "2. Get song album (album name and list of songs in that album)"
@@ -93,7 +96,12 @@ class Menu
             case choice.to_i
                 when 1
                     self.logo
+                    if pick.class == Hash
+                        new_song = Song.create(title: pick[:song], artist_id: pick[:artist].id, album_id: pick[:album].id, preview_url: pick[:preview_link])
+                        new_song.play_song
+                    else
                     pick.play_song
+                    end
                 when 2
                     logo
                     Album.show_album_info(pick) if pick.class != Hash
@@ -114,7 +122,7 @@ class Menu
                     if pick.class == Hash
                         # binding.pry
                         user = @@user
-                        if user.balance
+                        if user.balance >= 1
                             # binding.pry
                             new_song = Song.create(title: pick[:song], artist_id: pick[:artist].id, album_id: pick[:album].id, preview_url: pick[:preview_link])
                             Library.create(song_id: new_song.id, user_id: @@user.id )
@@ -122,7 +130,10 @@ class Menu
                             user.balance -= 1.00
                             user.save
                         else
+                            Menu.logo
                             puts "Balance is $0.00".red
+                            puts "Press enter to continue"
+                            gets.chomp
                         end
                         # binding.pry
                     else
@@ -148,11 +159,11 @@ class Menu
 
     def self.selector(counter)
         valid = nil
-        puts "-------------------------------------------"
-        puts "\nENTER SONG NUMBER"
-        puts "      OR"
-        puts "Enter any other key to go back to main menu"
-        puts "\n-------------------------------------------"
+        # puts "-------------------------------------------"
+        puts "\n         Please enter a song number"
+        puts "                      OR"
+        puts " Enter any other key to go back to main menu"
+        puts "\n--------------------------------------------".green
         while !valid
             response = gets.chomp
             if response.to_i <= counter && response.to_i >0
@@ -176,9 +187,9 @@ class Menu
     end
 
     def self.create_separator(text)
-        line = ""
+        line = "".green
         text.length.times {line += "-"}
-        line
+        line.green
     end
 
     def self.logo
@@ -199,6 +210,27 @@ class Menu
     puts "                                                                           Balance: $#{user.reload.balance}0" if @@user 
     2.times {puts ""}
     end
+
+
+def self.dancing_guy
+    dancer = 
+    "⊂_ヽ
+    　 ＼＼ ＿＿＿＿
+    　　 ＼( ͡° ͜ʖ ͡°)
+    　　　 <　⌒ ヽ 
+    　　　/ 　 へ＼
+    　　 /　　/　＼＼
+    　　 ﾚ　ノ　　 ヽ_つ
+    　　/　/
+    　 /　/|
+    　(　( ヽ
+    　|　|、 ＼
+    　| 丿 ＼  )
+    　| |　 ) /
+    `ノ )　 Lﾉ
+    (_／".magenta
+    return dancer
+end
 end
 
 # def logo
