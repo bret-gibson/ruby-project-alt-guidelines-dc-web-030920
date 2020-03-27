@@ -103,7 +103,10 @@ class Menu
                     if pick.class == Hash
                         new_song = Song.create(title: pick[:song], artist_id: pick[:artist].id, album_id: pick[:album].id, preview_url: pick[:preview])
                         Library.create(song_id: new_song.id, user_id: @@user.id )
-                        @@user.balance -= 1.00
+                        user = User.where(id: @@user.id)[0]
+                        user.balance -= 1.00
+                        user.save
+                        # binding.pry
                     else
                         pick.remove_song
                     end

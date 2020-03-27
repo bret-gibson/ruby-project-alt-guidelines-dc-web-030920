@@ -212,38 +212,42 @@ class User < ActiveRecord::Base
         if self.age < 18 && data[:explicit]
             puts "Minors are not allowed to add songs with explicit content".red
         elsif reply.downcase == "y"
-            
-            artist = Artist.where(name: data[:artist])[0]
-            if artist == nil
-                artist = Artist.create(name: data[:artist]) 
-            end
-            album = Album.where(name: data[:album])[0]
-            if album == nil
-                album = Album.create(name: data[:album], artist_id: artist.id, deezer_id: data[:deezer_id]) 
-            end
-            song = Song.where(title: data[:song], artist_id: artist.id)[0]
-            if song == nil
-                song = Song.create(title: data[:song], artist_id: artist.id, album_id: album.id, preview_url: data[:preview_link]) 
-            end
-            if Library.all.find {|lib| lib.user_id == self.id && lib.song_id == song.id} == nil
-                Library.create(user_id: self.id, song_id: song.id)
-                self.balance -= 1.00
-                binding.pry
-                
-              
-                Menu.logo
-                puts "\n#{data[:song]} by #{data[:artist]} has been added to your library! \n\n"
-                puts "\n Press 'ENTER' to return to Main Menu"
+            if self.balance <= 0.00
+                puts "U BROKE"
                 gets.chomp
-                Menu.main_menu(self)
             else
-                Menu.logo
-                puts "\n!!!!!   Song already exists in library    !!!!\n\n"
-                puts "\n Press 'ENTER' to return to Main Menu"
-                gets.chomp
-                Menu.main_menu(self)
+                artist = Artist.where(name: data[:artist])[0]
+                if artist == nil
+                    artist = Artist.create(name: data[:artist]) 
+                end
+                album = Album.where(name: data[:album])[0]
+                if album == nil
+                    album = Album.create(name: data[:album], artist_id: artist.id, deezer_id: data[:deezer_id]) 
+                end
+                song = Song.where(title: data[:song], artist_id: artist.id)[0]
+                if song == nil
+                    song = Song.create(title: data[:song], artist_id: artist.id, album_id: album.id, preview_url: data[:preview_link]) 
+                end
+                if Library.all.find {|lib| lib.user_id == self.id && lib.song_id == song.id} == nil
+                    Library.create(user_id: self.id, song_id: song.id)
+                    self.balance -= 1.00
+                    self.save
+                    binding.pry
+                    
+                
+                    Menu.logo
+                    puts "\n#{data[:song]} by #{data[:artist]} has been added to your library! \n\n"
+                    puts "\n Press 'ENTER' to return to Main Menu"
+                    gets.chomp
+                    Menu.main_menu(self)
+                else
+                    Menu.logo
+                    puts "\n!!!!!   Song already exists in library    !!!!\n\n"
+                    puts "\n Press 'ENTER' to return to Main Menu"
+                    gets.chomp
+                    Menu.main_menu(self)
+                end
             end
-
         else
             Menu.main_menu(self)
         end
